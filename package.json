@@ -4,6 +4,8 @@
   "private": true,
   "description": "Campus360 AI - Enterprise Smart College ERP Platform",
   "scripts": {
+    "build": "npm --prefix backend install && npm --prefix frontend install && npm --prefix frontend run build",
+    "start": "node backend/server.js",
     "dev:backend": "npm --prefix backend run dev",
     "dev:frontend": "npm --prefix frontend run dev",
     "start:backend": "npm --prefix backend start",

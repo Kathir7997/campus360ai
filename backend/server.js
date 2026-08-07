@@ -95,12 +95,40 @@ app.use('/api/od', odRoutes);
 app.use('/api/face', faceRoutes);
 app.use('/api/monitoring', monitoringRoutes);
 
+const path = require('path');
+const fs = require('fs');
+
 // Health check
 app.get('/api/health', (req, res) => {
   res.json({ success: true, message: 'Campus360 API is running 🚀', timestamp: new Date().toISOString() });
 });
 
-// 404 handler
+// Serve frontend static files if build exists (Full-stack single service mode)
+const frontendDistPath = path.join(__dirname, '../frontend/dist');
+if (fs.existsSync(frontendDistPath)) {
+  app.use(express.static(frontendDistPath));
+
+  app.get('*', (req, res, next) => {
+    if (req.originalUrl.startsWith('/api') || req.originalUrl.startsWith('/socket.io')) {
+      return next();
+    }
+    res.sendFile(path.join(frontendDistPath, 'index.html'));
+  });
+} else {
+  // API-only mode root landing
+  app.get('/', (req, res) => {
+    res.json({
+      success: true,
+      service: 'Campus360 AI Backend API',
+      status: 'online',
+      healthCheck: '/api/health',
+      message: 'Welcome to Campus360 AI API. All ERP API routes are available under /api/*',
+      timestamp: new Date().toISOString(),
+    });
+  });
+}
+
+// 404 handler for unmatched routes
 app.use((req, res) => {
   res.status(404).json({ success: false, message: `Route ${req.originalUrl} not found` });
 });
