@@ -29,9 +29,16 @@ const { setSocketServer } = require('./src/services/notificationService');
 const app = express();
 const server = http.createServer(app);
 
+// Trust reverse proxy (Render, Vercel, Nginx, Cloudflare)
+app.set('trust proxy', 1);
+
 // Socket.IO
 const io = new Server(server, {
-  cors: { origin: process.env.CLIENT_URL || 'http://localhost:5173', credentials: true },
+  cors: {
+    origin: true,
+    credentials: true,
+    methods: ['GET', 'POST'],
+  },
 });
 
 io.on('connection', (socket) => {
@@ -51,11 +58,12 @@ mqttService.init({ io });
 // Security headers
 app.use(helmet({ crossOriginResourcePolicy: false }));
 
-// CORS
+// Flexible CORS allowing Vercel, localhost, and custom frontend domains
 app.use(cors({
-  origin: process.env.CLIENT_URL || 'http://localhost:5173',
+  origin: true,
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
 }));
 
 // Rate limiting
