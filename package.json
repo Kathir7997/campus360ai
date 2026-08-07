@@ -1,4 +1,16 @@
 {
+  "name": "campus360ai",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Campus360 AI - Enterprise Smart College ERP Platform",
+  "scripts": {
+    "dev:backend": "npm --prefix backend run dev",
+    "dev:frontend": "npm --prefix frontend run dev",
+    "start:backend": "npm --prefix backend start",
+    "build:frontend": "npm --prefix frontend run build",
+    "test:backend": "npm --prefix backend test",
+    "install:all": "npm install && npm --prefix backend install && npm --prefix frontend install"
+  },
   "dependencies": {
     "mqtt": "^5.15.2",
     "pdfkit": "^0.19.1"
